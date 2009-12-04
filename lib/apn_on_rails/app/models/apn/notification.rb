@@ -17,6 +17,8 @@
 class APN::Notification < APN::Base
   include ::ActionView::Helpers::TextHelper
   extend ::ActionView::Helpers::TextHelper
+
+  serialize :payload
   
   belongs_to :device, :class_name => 'APN::Device'
   
@@ -48,6 +50,7 @@ class APN::Notification < APN::Base
       result['aps']['sound'] = self.sound if self.sound.is_a? String
       result['aps']['sound'] = "1.aiff" if self.sound.is_a?(TrueClass)
     end
+    result.merge! payload if payload
     result
   end
   

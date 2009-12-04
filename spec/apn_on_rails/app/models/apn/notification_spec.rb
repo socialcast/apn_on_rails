@@ -27,6 +27,13 @@ describe APN::Notification do
       noty.apple_hash.should == {"aps" => {"sound" => "1.aiff"}}
     end
     
+    it 'should include an optional payload' do
+      payload = { :prop1 => 'value1', :prop2 => 2 }
+      noty = APN::Notification.new :payload => payload
+
+      noty.apple_hash.should == {"aps" => {}}.merge(payload)
+    end
+
   end
   
   describe 'to_apple_json' do
@@ -36,6 +43,11 @@ describe APN::Notification do
       noty.to_apple_json.should == %{{"aps":{"badge":5,"sound":"my_sound.aiff","alert":"Hello!"}}}
     end
     
+    it 'should include an optional payload' do
+      noty = APN::Notification.new :payload => { :prop1 => 'value1', :prop2 => 2 }
+      noty.to_apple_json.should == %{{"prop1":"value1","aps":{},"prop2":2}}
+    end
+
   end
   
   describe 'message_for_sending' do
