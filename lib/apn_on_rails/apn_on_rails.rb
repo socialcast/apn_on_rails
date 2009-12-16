@@ -41,8 +41,11 @@ module APN # :nodoc:
       
       def initialize(message) # :nodoc:
         super("The maximum size allowed for a notification payload is 256 bytes: '#{message}'")
+        @overage = message.size.to_i - 256
       end
-      
+      def overage
+        @overage
+      end
     end
     
   end # Errors

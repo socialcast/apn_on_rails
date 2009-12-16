@@ -2,12 +2,13 @@ require File.join(File.dirname(__FILE__), '..', '..', '..', '..', 'spec_helper.r
 
 describe APN::Notification do
   
-  describe 'alert' do
+  describe 'truncate_alert' do
     
-    it 'should trim the message to 150 characters' do
-      noty = APN::Notification.new
-      noty.alert = 'a' * 200
-      noty.alert.should == ('a' * 147) + '...'
+    it 'should truncate alert text to fit in 256 character payload' do
+      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 183)
+      noty.save!
+      noty.alert.should == ('a' * 179) + '...'
+      noty.message_for_sending.size.should == 256
     end
     
   end
@@ -59,11 +60,20 @@ describe APN::Notification do
     end
     
     it 'should raise an APN::Errors::ExceededMessageSizeError if the message is too big' do
-      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil)
-      noty.send(:write_attribute, 'alert', 'a' * 183)
+      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 183)
       lambda {
         noty.message_for_sending
       }.should raise_error(APN::Errors::ExceededMessageSizeError)
+    end
+    
+    it 'should raise an APN::Errors::ExceededMessageSizeError with overage attribute if the message is too big' do
+      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 183)
+      begin
+        noty.message_for_sending
+        flunk 'error should be raised'
+      rescue APN::Errors::ExceededMessageSizeError => e
+        e.overage.should == 1
+      end
     end
     
   end

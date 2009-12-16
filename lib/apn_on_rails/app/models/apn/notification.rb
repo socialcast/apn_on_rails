@@ -21,17 +21,7 @@ class APN::Notification < APN::Base
   serialize :payload
   
   belongs_to :device, :class_name => 'APN::Device'
-  
-  # Stores the text alert message you want to send to the device.
-  # 
-  # If the message is over 150 characters long it will get truncated
-  # to 150 characters with a <tt>...</tt>
-  def alert=(message)
-    if !message.blank? && message.size > 150
-      message = truncate(message, :length => 150)
-    end
-    write_attribute('alert', message)
-  end
+  before_save :truncate_alert
   
   # Creates a Hash that will be the payload of an APN.
   # 
@@ -104,4 +94,14 @@ class APN::Notification < APN::Base
     
   end # class << self
   
+  private
+  # Truncate alert message if message payload will be too long
+  def truncate_alert
+    return unless self.alert
+    begin
+      self.message_for_sending
+    rescue APN::Errors::ExceededMessageSizeError => e
+      self.alert = truncate(self.alert, :length => self.alert.size - e.overage)
+    end
+  end
 end # APN::Notification
