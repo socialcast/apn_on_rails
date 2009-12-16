@@ -10,6 +10,13 @@ describe APN::Notification do
       noty.alert.should == ('a' * 179) + '...'
       noty.message_for_sending.size.should == 256
     end
+
+    it 'should truncate alert text more when custom dictionary added to fit in 256 character payload' do
+      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 183, :payload => {:a => 'foo'})
+      noty.save!
+      noty.alert.should == ('a' * 169) + '...'
+      noty.message_for_sending.size.should == 256
+    end
     
   end
   
