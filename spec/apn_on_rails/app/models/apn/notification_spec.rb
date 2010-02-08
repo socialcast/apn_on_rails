@@ -86,17 +86,6 @@ describe APN::Notification do
         noty.message_for_sending
       }.should raise_error(APN::Errors::ExceededMessageSizeError)
     end
-    
-    it 'should raise an APN::Errors::ExceededMessageSizeError with overage attribute if the message is too big' do
-      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 250)
-      begin
-        noty.message_for_sending
-        flunk 'error should be raised'
-      rescue APN::Errors::ExceededMessageSizeError => e
-        e.overage.should == 32
-      end
-    end
-    
   end
   
   describe 'send_notifications' do
