@@ -38,10 +38,10 @@ module APN # :nodoc:
     
     # Raised when a notification message to Apple is longer than 256 bytes.
     class ExceededMessageSizeError < StandardError
-      
+      MAX_BYTES = 255
       def initialize(message) # :nodoc:
-        super("The maximum size allowed for a notification payload is 256 bytes: '#{message}'")
-        @overage = message.size.to_i - 256
+        super("The maximum size allowed for a notification payload is #{MAX_BYTES} bytes: '#{message}'")
+        @overage = message.size.to_i - MAX_BYTES
       end
       def overage
         @overage

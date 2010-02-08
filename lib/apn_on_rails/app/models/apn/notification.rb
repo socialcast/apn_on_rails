@@ -15,9 +15,6 @@
 # As each APN::Notification is sent the <tt>sent_at</tt> column will be timestamped,
 # so as to not be sent again.
 class APN::Notification < APN::Base
-  include ::ActionView::Helpers::TextHelper
-  extend ::ActionView::Helpers::TextHelper
-
   serialize :payload
   
   belongs_to :device, :class_name => 'APN::Device'
@@ -57,11 +54,12 @@ class APN::Notification < APN::Base
   end
   
   # Creates the binary message needed to send to Apple.
+  # see http://developer.apple.com/IPhone/library/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingWIthAPS/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW4
   def message_for_sending
     json = self.to_apple_json
-    message = "\0\0 #{self.device.to_hexa}\0#{(json.length > 255 ? 255 : json.length).chr}#{json}"
-    raise APN::Errors::ExceededMessageSizeError.new(message) if message.size.to_i > 256
-    message
+    raise APN::Errors::ExceededMessageSizeError.new(json) if json.size.to_i > APN::Errors::ExceededMessageSizeError::MAX_BYTES
+
+    "\0\0 #{self.device.to_hexa}\0#{(json.length).chr}#{json}"
   end
   
   class << self
@@ -101,7 +99,10 @@ class APN::Notification < APN::Base
     begin
       self.message_for_sending
     rescue APN::Errors::ExceededMessageSizeError => e
-      self.alert = truncate(self.alert, :length => self.alert.size - e.overage)
+      puts "TRUNCATING #{e.overage} characters"
+      ellipsis = '...'
+      self.alert = (self.alert.slice(0, self.alert.size - e.overage - ellipsis.length) || '') + ellipsis
+      puts "#{self.alert} : #{self.alert.size.to_i}"
     end
   end
 end # APN::Notification

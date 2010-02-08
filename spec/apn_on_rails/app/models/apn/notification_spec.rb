@@ -4,25 +4,33 @@ describe APN::Notification do
   
   describe 'truncate_alert' do
     
-    it 'should truncate alert text to fit in 256 character payload' do
-      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 183)
-      noty.save!
-      noty.alert.should == ('a' * 179) + '...'
-      noty.message_for_sending.size.should == 256
-    end
-
-    it 'should truncate very long alert text to fit in 256 character payload' do
+    it 'should truncate alert text to fit in 255 byte payload' do
       noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 250)
       noty.save!
-      noty.alert.should == ('a' * 179) + '...'
-      noty.message_for_sending.size.should == 256
+      noty.alert.should == ('a' * 215) + '...'
+      noty.to_apple_json.size.should == 255
+      #should not raise error
+      noty.message_for_sending
     end
 
-    it 'should truncate alert text more when custom dictionary added to fit in 256 character payload' do
-      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 183, :payload => {:a => 'foo'})
+    it 'should truncate very long unicode alert text to fit in 255 byte payload' do
+      s = "Ω" * 250
+      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => s)
       noty.save!
-      noty.alert.should == ('a' * 169) + '...'
-      noty.message_for_sending.size.should == 256
+      puts noty.message_for_sending
+      noty.alert.should == ("Ω" * 78) + '...'
+      noty.to_apple_json.size.should == 255
+      #should not raise error
+      noty.message_for_sending
+    end
+
+    it 'should truncate alert text more when custom dictionary added to fit in 255 byte payload' do
+      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 250, :payload => {:a => 'foo'})
+      noty.save!
+      noty.alert.should == ('a' * 205) + '...'
+      noty.to_apple_json.size.should == 255
+      #should not raise error
+      noty.message_for_sending
     end
     
   end
@@ -74,19 +82,19 @@ describe APN::Notification do
     end
     
     it 'should raise an APN::Errors::ExceededMessageSizeError if the message is too big' do
-      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 183)
+      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 250)
       lambda {
         noty.message_for_sending
       }.should raise_error(APN::Errors::ExceededMessageSizeError)
     end
     
     it 'should raise an APN::Errors::ExceededMessageSizeError with overage attribute if the message is too big' do
-      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 183)
+      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 250)
       begin
         noty.message_for_sending
         flunk 'error should be raised'
       rescue APN::Errors::ExceededMessageSizeError => e
-        e.overage.should == 1
+        e.overage.should == 32
       end
     end
     
