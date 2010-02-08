@@ -15,6 +15,8 @@
 # As each APN::Notification is sent the <tt>sent_at</tt> column will be timestamped,
 # so as to not be sent again.
 class APN::Notification < APN::Base
+  include ::ActionView::Helpers::TextHelper
+
   serialize :payload
   
   belongs_to :device, :class_name => 'APN::Device'
@@ -96,13 +98,13 @@ class APN::Notification < APN::Base
   # Truncate alert message if message payload will be too long
   def truncate_alert
     return unless self.alert
-    begin
-      self.message_for_sending
-    rescue APN::Errors::ExceededMessageSizeError => e
-      puts "TRUNCATING #{e.overage} characters"
-      ellipsis = '...'
-      self.alert = (self.alert.slice(0, self.alert.size - e.overage - ellipsis.length) || '') + ellipsis
-      puts "#{self.alert} : #{self.alert.size.to_i}"
+    while self.alert.length > 1
+      begin
+        self.message_for_sending
+        break
+      rescue APN::Errors::ExceededMessageSizeError => e
+        self.alert = truncate(self.alert, :length => self.alert.mb_chars.length - 1)
+      end
     end
   end
 end # APN::Notification

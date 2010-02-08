@@ -17,9 +17,8 @@ describe APN::Notification do
       s = "Ω" * 250
       noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => s)
       noty.save!
-      puts noty.message_for_sending
-      noty.alert.should == ("Ω" * 78) + '...'
-      noty.to_apple_json.size.should == 255
+      noty.alert.should == ("Ω" * 35) + '...'
+      noty.to_apple_json.size.should == 250
       #should not raise error
       noty.message_for_sending
     end
