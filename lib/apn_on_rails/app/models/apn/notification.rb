@@ -79,15 +79,17 @@ class APN::Notification < APN::Base
     # This can be run from the following Rake task:
     #   $ rake apn:notifications:deliver
     def send_notifications(notifications = APN::Notification.all(:conditions => {:sent_at => nil}))
-      unless notifications.nil? || notifications.empty?
-
+      return if notifications.nil? || notifications.empty?
+      sent_ids = []
+      begin
         APN::Connection.open_for_delivery do |conn, sock|
           notifications.each do |noty|
+            sent_ids << noty.id
             conn.write(noty.message_for_sending)
           end
         end
-
-        APN::Notification.update_all ['sent_at = ?', Time.now.utc], ['id in (?)', notifications.collect(&:id)]
+      ensure
+        APN::Notification.update_all(['sent_at = ?', Time.now.utc], ['id in (?)', sent_ids]) if sent_ids.any?
       end
     end
     
