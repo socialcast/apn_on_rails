@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{wireframe-apn_on_rails}
-  s.version = "0.3.0.20110210134602"
+  s.version = "0.3.0.20110214171409"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["ryan"]
-  s.date = %q{2011-02-10}
+  s.date = %q{2011-02-14}
   s.description = %q{apn_on_rails was developed by: ryan}
   s.email = %q{mark@markbates.com}
   s.extra_rdoc_files = ["README", "LICENSE"]
@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://www.metabates.com}
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{magrathea}
-  s.rubygems_version = %q{1.5.0}
+  s.rubygems_version = %q{1.5.2}
   s.summary = %q{apn_on_rails}
 
   if s.respond_to? :specification_version then
