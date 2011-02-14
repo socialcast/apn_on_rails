@@ -68,28 +68,27 @@ class APN::Notification < APN::Base
     
     # Opens a connection to the Apple APN server and attempts to batch deliver
     # an Array of notifications.
-    # 
-    # This method expects an Array of APN::Notifications. If no parameter is passed
-    # in then it will use the following:
-    #   APN::Notification.all(:conditions => {:sent_at => nil})
-    # 
-    # As each APN::Notification is sent the <tt>sent_at</tt> column will be timestamped,
-    # so as to not be sent again.
-    # 
     # This can be run from the following Rake task:
     #   $ rake apn:notifications:deliver
-    def send_notifications(notifications = APN::Notification.all(:conditions => {:sent_at => nil}))
-      return if notifications.nil? || notifications.empty?
+    def send_notifications(notifications)
       sent_ids = []
+      sent = false
+      message = ''
+
+      notifications.find_each do |noty|
+        sent_ids << noty.id
+        message << noty.message_for_sending
+      end
+
+      return if send_ids.empty?
+
       begin
         APN::Connection.open_for_delivery do |conn, sock|
-          notifications.each do |noty|
-            sent_ids << noty.id
-            conn.write(noty.message_for_sending)
-          end
+          sent = true
+          conn.write(message)
         end
       ensure
-        APN::Notification.update_all(['sent_at = ?', Time.now.utc], ['id in (?)', sent_ids]) if sent_ids.any?
+        APN::Notification.update_all(['sent_at = ?', Time.now.utc], ['id in (?)', sent_ids]) if sent && sent_ids.any?
       end
     end
     
