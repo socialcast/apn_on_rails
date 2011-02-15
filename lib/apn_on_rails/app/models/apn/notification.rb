@@ -80,7 +80,7 @@ class APN::Notification < APN::Base
         message << noty.message_for_sending
       end
 
-      return if send_ids.empty?
+      return if sent_ids.empty?
 
       begin
         APN::Connection.open_for_delivery do |conn, sock|
