@@ -59,10 +59,12 @@ class APN::Notification < APN::Base
   # see http://developer.apple.com/IPhone/library/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingWIthAPS/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW4
   def message_for_sending
     json = self.to_apple_json
-    json.force_encoding('BINARY') if json.respond_to? :force_encoding
-    message = "\0\0 #{self.device.to_hexa}\0#{(json.bytesize).chr}#{json}"
+    message = "\0\0 #{self.device.to_hexa}\0#{encode((json.bytesize).chr)}#{encode(json)}"
     raise APN::Errors::ExceededMessageSizeError.new(message) if message.bytesize.to_i > APN::Errors::ExceededMessageSizeError::MAX_BYTES
     message
+  end
+  def encode(string)
+    string.respond_to?(:force_encoding) ? string.force_encoding('BINARY') : string
   end
   
   class << self
