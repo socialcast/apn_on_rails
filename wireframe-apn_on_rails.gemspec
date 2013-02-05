@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{wireframe-apn_on_rails}
-  s.version = "0.3.0.20130122094500"
+  s.version = "0.3.0.201302051600"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["ryan"]
