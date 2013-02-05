@@ -106,7 +106,7 @@ class APN::Notification < APN::Base
         self.message_for_sending
         break
       rescue APN::Errors::ExceededMessageSizeError => e
-        self.alert = truncate(self.alert, :length => self.alert.mb_chars.length - 1)
+        self.alert = truncate(self.alert, :escape => false, :length => self.alert.mb_chars.length - 1)
       end
     end
   end
