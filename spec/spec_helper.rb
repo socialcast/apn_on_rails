@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'spec'
+require 'rspec'
 require 'action_view'
 
 Dir.glob(File.join(File.dirname(__FILE__), 'extensions', '*.rb')).sort.each do |f|
@@ -14,7 +14,7 @@ Dir.glob(File.join(File.dirname(__FILE__), 'factories', '*.rb')).sort.each do |f
   require f
 end
 
-configatron.apn.cert = File.expand_path(File.join(File.dirname(__FILE__), 'rails_root', 'config', 'apple_push_notification_development.pem'))
+APN_CONFIG.cert = File.expand_path(File.join(File.dirname(__FILE__), 'rails_root', 'config', 'apple_push_notification_development.pem'))
 
 Spec::Runner.configure do |config|
   
@@ -41,11 +41,11 @@ def fixture_path(*name)
 end
 
 def fixture_value(*name)
-  return File.read(fixture_path(*name))
+  return File.open(fixture_path(*name), 'rb') { |io| io.read }
 end
 
 def write_fixture(name, value)
-  File.open(fixture_path(*name), 'w') {|f| f.write(value)}
+  File.open(fixture_path(*name), 'wb') {|f| f.write(value)}
 end
 
 def apn_cert

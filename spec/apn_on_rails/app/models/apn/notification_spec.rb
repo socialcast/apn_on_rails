@@ -1,7 +1,8 @@
+# encoding: UTF-8
 require File.join(File.dirname(__FILE__), '..', '..', '..', '..', 'spec_helper.rb')
 
 describe APN::Notification do
-  
+
   describe 'truncate_alert' do
     
     it 'should truncate alert text to fit in 255 byte payload' do

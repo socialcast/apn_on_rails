@@ -1,5 +1,6 @@
 require 'rubygems'
-require 'activerecord'
+require 'active_record'
+require 'logger'
 
 logger = Logger.new(STDOUT)
 logger.level = Logger::INFO
