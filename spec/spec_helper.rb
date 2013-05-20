@@ -31,7 +31,7 @@ def write_fixture(name, value)
 end
 
 def apn_cert
-  File.read(APN_CONFIG.cert)
+  File.read(File.expand_path(File.join(File.dirname(__FILE__), 'rails_root', 'config', 'apple_push_notification_development.pem')))
 end
 
 class BlockRan < StandardError
