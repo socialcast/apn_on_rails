@@ -6,7 +6,7 @@ describe APN::Notification do
   describe 'truncate_alert' do
     
     it 'should truncate alert text to fit in 255 byte payload' do
-      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 250)
+      noty = NotificationFactory.new(:device_id => DeviceFactory.create.id, :sound => true, :badge => nil, :alert => 'a' * 250)
       noty.save!
       noty.alert.should == ('a' * 215) + '...'
       noty.to_apple_json.size.should == 255
@@ -16,7 +16,7 @@ describe APN::Notification do
 
     it 'should truncate very long unicode alert text to fit in 255 byte payload' do
       s = "Ω" * 250
-      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => s)
+      noty = NotificationFactory.new(:device_id => DeviceFactory.create.id, :sound => true, :badge => nil, :alert => s)
       noty.save!
       noty.alert.should == ("Ω" * 35) + '...'
       noty.to_apple_json.size.should == 250
@@ -25,7 +25,7 @@ describe APN::Notification do
     end
 
     it 'should truncate alert text more when custom dictionary added to fit in 255 byte payload' do
-      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 250, :payload => {:a => 'foo'})
+      noty = NotificationFactory.new(:device_id => DeviceFactory.create.id, :sound => true, :badge => nil, :alert => 'a' * 250, :payload => {:a => 'foo'})
       noty.save!
       noty.alert.should == ('a' * 205) + '...'
       noty.to_apple_json.size.should == 255
@@ -82,7 +82,7 @@ describe APN::Notification do
     end
     
     it 'should raise an APN::Errors::ExceededMessageSizeError if the message is too big' do
-      noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil, :alert => 'a' * 250)
+      noty = NotificationFactory.new(:device_id => DeviceFactory.create.id, :sound => true, :badge => nil, :alert => 'a' * 250)
       lambda {
         noty.message_for_sending
       }.should raise_error(APN::Errors::ExceededMessageSizeError)
