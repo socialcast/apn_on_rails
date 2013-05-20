@@ -1,5 +1,6 @@
 require 'rubygems'
-require 'activerecord'
+require 'active_record'
+require 'logger'
 
 logger = Logger.new(STDOUT)
 logger.level = Logger::INFO
@@ -16,4 +17,3 @@ ActiveRecord::Base.establish_connection({
 
 ActiveRecord::Migrator.up(File.join(File.dirname(__FILE__), '..', '..', 'generators', 'templates', 'apn_migrations'))
 
-# raise hell
