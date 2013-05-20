@@ -77,30 +77,29 @@ Now, to create the tables you need for APN on Rails, run the following task:
   $ ruby script/generate apn_migrations
 </code></pre>
 
-APN on Rails uses the Configatron gem, http://github.com/markbates/configatron/tree/master, 
-to configure itself. APN on Rails has the following default configurations that you change as you
+AN on Rails has the following default configurations that you change as you
 see fit:
 
 <pre><code>
   # development (delivery):
-  configatron.apn.passphrase # => ''
-  configatron.apn.port # => 2195
-  configatron.apn.host # => 'gateway.sandbox.push.apple.com'
-  configatron.apn.cert #=> File.join(RAILS_ROOT, 'config', 'apple_push_notification_development.pem')
+  APN_CONFIG.passphrase # => ''
+  APN_CONFIG.port # => 2195
+  APN_CONFIG.host # => 'gateway.sandbox.push.apple.com'
+  APN_CONFIG.cert #=> File.join(RAILS_ROOT, 'config', 'apple_push_notification_development.pem')
   
   # production (delivery):
-  configatron.apn.host # => 'gateway.push.apple.com'
-  configatron.apn.cert #=> File.join(RAILS_ROOT, 'config', 'apple_push_notification_production.pem')
+  APN_CONFIG.host # => 'gateway.push.apple.com'
+  APN_CONFIG.cert #=> File.join(RAILS_ROOT, 'config', 'apple_push_notification_production.pem')
   
   # development (feedback):
-  configatron.apn.feedback.passphrase # => ''
-  configatron.apn.feedback.port # => 2196
-  configatron.apn.feedback.host # => 'feedback.sandbox.push.apple.com'
-  configatron.apn.feedback.cert #=> File.join(RAILS_ROOT, 'config', 'apple_push_notification_development.pem')
+  APN_FEEDBACK_CONFIG.passphrase # => ''
+  APN_FEEDBACK_CONFIG.port # => 2196
+  APN_FEEDBACK_CONFIG.host # => 'feedback.sandbox.push.apple.com'
+  APN_FEEDBACK_CONFIG.cert #=> File.join(RAILS_ROOT, 'config', 'apple_push_notification_development.pem')
   
   # production (feedback):
-  configatron.apn.feedback.host # => 'feedback.push.apple.com'
-  configatron.apn.feedback.cert #=> File.join(RAILS_ROOT, 'config', 'apple_push_notification_production.pem')
+  APN_FEEDBACK_CONFIG.host # => 'feedback.push.apple.com'
+  APN_FEEDBACK_CONFIG.cert #=> File.join(RAILS_ROOT, 'config', 'apple_push_notification_production.pem')
 </code></pre>
 
 That's it, now you're ready to start creating notifications.

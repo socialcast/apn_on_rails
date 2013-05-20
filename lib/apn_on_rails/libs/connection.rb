@@ -13,12 +13,12 @@ module APN
       # 
       # Configuration parameters are:
       # 
-      #   configatron.apn.passphrase = ''
-      #   configatron.apn.port = 2195
-      #   configatron.apn.host = 'gateway.sandbox.push.apple.com' # Development
-      #   configatron.apn.host = 'gateway.push.apple.com' # Production
-      #   configatron.apn.cert = File.join(rails_root, 'config', 'apple_push_notification_development.pem')) # Development
-      #   configatron.apn.cert = File.join(rails_root, 'config', 'apple_push_notification_production.pem')) # Production
+      #   APN_CONFIG.passphrase = ''
+      #   APN_CONFIG.port = 2195
+      #   APN_CONFIG.host = 'gateway.sandbox.push.apple.com' # Development
+      #   APN_CONFIG.host = 'gateway.push.apple.com' # Production
+      #   APN_CONFIG.cert = File.join(rails_root, 'config', 'apple_push_notification_development.pem')) # Development
+      #   APN_CONFIG.cert = File.join(rails_root, 'config', 'apple_push_notification_production.pem')) # Production
       def open_for_delivery(options = {}, &block)
         open(options, &block)
       end
@@ -27,26 +27,26 @@ module APN
       # The connections are close automatically.
       # Configuration parameters are:
       # 
-      #   configatron.apn.feedback.passphrase = ''
-      #   configatron.apn.feedback.port = 2196
-      #   configatron.apn.feedback.host = 'feedback.sandbox.push.apple.com' # Development
-      #   configatron.apn.feedback.host = 'feedback.push.apple.com' # Production
-      #   configatron.apn.feedback.cert = File.join(rails_root, 'config', 'apple_push_notification_development.pem')) # Development
-      #   configatron.apn.feedback.cert = File.join(rails_root, 'config', 'apple_push_notification_production.pem')) # Production
+      #   APN_FEEDBACK_CONFIG.passphrase = ''
+      #   APN_FEEDBACK_CONFIG.port = 2196
+      #   APN_FEEDBACK_CONFIG.host = 'feedback.sandbox.push.apple.com' # Development
+      #   APN_FEEDBACK_CONFIG.host = 'feedback.push.apple.com' # Production
+      #   APN_FEEDBACK_CONFIG.cert = File.join(rails_root, 'config', 'apple_push_notification_development.pem')) # Development
+      #   APN_FEEDBACK_CONFIG.cert = File.join(rails_root, 'config', 'apple_push_notification_production.pem')) # Production
       def open_for_feedback(options = {}, &block)
-        options = {:cert => configatron.apn.feedback.cert,
-                   :passphrase => configatron.apn.feedback.passphrase,
-                   :host => configatron.apn.feedback.host,
-                   :port => configatron.apn.feedback.port}.merge(options)
+        options = {:cert => APN_FEEDBACK_CONFIG.cert,
+                   :passphrase => APN_FEEDBACK_CONFIG.passphrase,
+                   :host => APN_FEEDBACK_CONFIG.host,
+                   :port => APN_FEEDBACK_CONFIG.port}.merge(options)
         open(options, &block)
       end
       
       private
       def open(options = {}, &block) # :nodoc:
-        options = {:cert => configatron.apn.cert,
-                   :passphrase => configatron.apn.passphrase,
-                   :host => configatron.apn.host,
-                   :port => configatron.apn.port}.merge(options)
+        options = {:cert => APN_CONFIG.cert,
+                   :passphrase => APN_CONFIG.passphrase,
+                   :host => APN_CONFIG.host,
+                   :port => APN_CONFIG.port}.merge(options)
         cert = File.read(options[:cert])
         ctx = OpenSSL::SSL::SSLContext.new
         ctx.key = OpenSSL::PKey::RSA.new(cert, options[:passphrase])
