@@ -16,7 +16,7 @@ Dir.glob(File.join(File.dirname(__FILE__), 'factories', '*.rb')).sort.each do |f
   require f
 end
 
-APN_CONFIG.set(:cert, File.expand_path(File.join(File.dirname(__FILE__), 'rails_root', 'config', 'apple_push_notification_development.pem')))
+APN_CONFIG[:cert] = File.expand_path(File.join(File.dirname(__FILE__), 'rails_root', 'config', 'apple_push_notification_development.pem'))
 
 def fixture_path(*name)
   return File.join(File.dirname(__FILE__), 'fixtures', *name)
