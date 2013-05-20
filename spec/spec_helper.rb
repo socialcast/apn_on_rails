@@ -1,3 +1,5 @@
+ENV["RAILS_ENV"] ||= 'test'
+Encoding.default_internal = 'UTF-8'
 require 'rubygems'
 require 'rspec'
 require 'action_view'
