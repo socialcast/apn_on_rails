@@ -1,5 +1,5 @@
 # encoding: UTF-8
-require File.join(File.dirname(__FILE__), '..', '..', '..', '..', 'spec_helper.rb')
+require 'spec_helper'
 
 describe APN::Notification do
 
