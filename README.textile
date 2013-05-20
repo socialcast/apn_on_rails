@@ -77,7 +77,7 @@ Now, to create the tables you need for APN on Rails, run the following task:
   $ ruby script/generate apn_migrations
 </code></pre>
 
-AN on Rails has the following default configurations that you change as you
+APN on Rails has the following default configurations that you change as you
 see fit:
 
 <pre><code>
