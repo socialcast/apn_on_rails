@@ -17,4 +17,3 @@ ActiveRecord::Base.establish_connection({
 
 ActiveRecord::Migrator.up(File.join(File.dirname(__FILE__), '..', '..', 'generators', 'templates', 'apn_migrations'))
 
-# raise hell
