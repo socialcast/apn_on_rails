@@ -93,36 +93,18 @@ describe APN::Notification do
       notifications = [NotificationFactory.create, NotificationFactory.create]
       notifications.each_with_index do |notify, i|
         notify.stub(:message_for_sending).and_return("message-#{i}")
-        notify.should_receive(:sent_at=).with(instance_of(Time))
+        notify.reload.sent_at.should be_nil
       end
 
       ssl_mock = mock('ssl_mock')
-      ssl_mock.should_receive(:write).with('message-0')
-      ssl_mock.should_receive(:write).with('message-1')
+      ssl_mock.should_receive(:write).with('message-0message-1')
       APN::Connection.should_receive(:open_for_delivery).and_yield(ssl_mock, nil)
-
-      APN::Notification.should_receive(:update_all).with(1, 2)
-      APN::Notification.send_notifications(notifications)
-    end
-
-    it 'should record first notification as sent if second fails' do
-      notifications = [NotificationFactory.create, NotificationFactory.create]
-      notifications.each_with_index do |notify, i|
-        if i == 0
-          notify.stub(:message_for_sending).and_return("message-#{i}")
-        else
-          notify.stub(:message_for_sending).and_raise("bad message")
-        end
-        notify.should_receive(:sent_at=).with(instance_of(Time))
-      end
-
-      ssl_mock = mock('ssl_mock')
-      ssl_mock.should_receive(:write).with('message-0')
-      APN::Connection.should_receive(:open_for_delivery).and_yield(ssl_mock, nil)
-
-      APN::Notification.should_receive(:update_all).with(1)
+      notifications.stub(:find_each).and_yield(notifications.first).and_yield(notifications.last)
 
       APN::Notification.send_notifications(notifications)
+
+      notifications.first.reload.sent_at.should_not be_nil
+      notifications.last.reload.sent_at.should_not be_nil
     end
 
   end
