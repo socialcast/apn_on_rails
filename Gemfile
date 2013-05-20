@@ -8,4 +8,5 @@ group :test do
   gem 'rspec'
   gem 'actionpack'
   gem 'sqlite3'
+  gem 'debugger'
 end
