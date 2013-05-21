@@ -1,6 +1,5 @@
 require 'socket'
 require 'openssl'
-require 'configatron'
 
 rails_root = File.join(FileUtils.pwd, 'rails_root')
 if defined?(RAILS_ROOT)
@@ -12,24 +11,26 @@ if defined?(RAILS_ENV)
   rails_env = RAILS_ENV
 end
 
-configatron.apn.set_default(:passphrase, '')
-configatron.apn.set_default(:port, 2195)
+APN_CONFIG = Hash.new
+APN_CONFIG[:passphrase] = ''
+APN_CONFIG[:port] = 2195
 
-configatron.apn.feedback.set_default(:passphrase, configatron.apn.passphrase)
-configatron.apn.feedback.set_default(:port, 2196)
+APN_FEEDBACK_CONFIG = Hash.new
+APN_FEEDBACK_CONFIG[:passphrase] = ''
+APN_FEEDBACK_CONFIG[:port] = 2196
 
 if rails_env == 'production'
-  configatron.apn.set_default(:host, 'gateway.push.apple.com')
-  configatron.apn.set_default(:cert, File.join(rails_root, 'config', 'apple_push_notification_production.pem'))
-  
-  configatron.apn.feedback.set_default(:host, 'feedback.push.apple.com')
-  configatron.apn.feedback.set_default(:cert, configatron.apn.cert)
+  APN_CONFIG[:host]= 'gateway.push.apple.com'
+  APN_CONFIG[:cert]= File.join(rails_root, 'config', 'apple_push_notification_production.pem')
+
+  APN_FEEDBACK_CONFIG[:host]= 'feedback.push.apple.com'
+  APN_FEEDBACK_CONFIG[:cert]= APN_CONFIG[:cert]
 else
-  configatron.apn.set_default(:host, 'gateway.sandbox.push.apple.com')
-  configatron.apn.set_default(:cert, File.join(rails_root, 'config', 'apple_push_notification_development.pem'))
-  
-  configatron.apn.feedback.set_default(:host, 'feedback.sandbox.push.apple.com')
-  configatron.apn.feedback.set_default(:cert, configatron.apn.cert)
+  APN_CONFIG[:host]= 'gateway.sandbox.push.apple.com'
+  APN_CONFIG[:cert]= File.join(rails_root, 'config', 'apple_push_notification_development.pem')
+
+  APN_FEEDBACK_CONFIG[:host]= 'feedback.sandbox.push.apple.com'
+  APN_FEEDBACK_CONFIG[:cert]= APN_CONFIG[:cert]
 end
 
 module APN # :nodoc:
